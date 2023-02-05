@@ -1,0 +1,84 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "darkmark"
+description = 'Execute codeblocks inside of markdown'
+readme = "README.md"
+requires-python = ">=3.7"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Waylon S. Walker", email = "waylon@waylonwalker.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "typer",
+  "tree-sitter-languages",
+  "ipython",
+  "rich",
+  "pyflyby",
+  "checksumdir",
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://github.com/unknown/darkmark#readme"
+Issues = "https://github.com/unknown/darkmark/issues"
+Source = "https://github.com/unknown/darkmark"
+
+[project.scripts]
+darkmark = "darkmark.cli:app"
+
+[tool.hatch.version]
+path = "darkmark/__about__.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+  "pytest-icdiff",
+  "ruff",
+  "black",
+]
+
+[[tool.hatch.envs.test.matrix]]
+python = ["37", "38", "39", "310", "311"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = [
+  "darkmark/__about__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
+
+[tool.hatch.envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=darkmark --cov=tests"
+no-cov = "cov --no-cov"
+lint = "ruff darkmark"
+format = "black --check darkmark"
+build-docs = "markata build"
+lint-test = [
+ "format",
+ "lint",
+ "cov",
+]
+test-lint = "lint-test"
