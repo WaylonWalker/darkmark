@@ -5,7 +5,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/darkmark.svg)](https://pypi.org/project/darkmark)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/darkmark.svg)](https://pypi.org/project/darkmark)
 
-Runs codeblocks marked with the darkmark, and inserts the results afterwards.
+Runs codeblocks marked with the darkmark, and inserts the results.
 
 -----
 
