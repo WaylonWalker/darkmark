@@ -5,7 +5,9 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/darkmark.svg)](https://pypi.org/project/darkmark)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/darkmark.svg)](https://pypi.org/project/darkmark)
 
-Runs codeblocks marked with the darkmark, and inserts the results.
+Runs codeblocks marked with the darkmark, and inserts the results.  
+
+DarkMark uses tree-sitter to identify codeblocks.  Currently it only supports python codeblocks in markdown files and runs them with ipython.  Handy for writing docs/blog posts so you can stay right in your markdown editor of choice and get the outputs in line.  No need to jump into a whole other tool just to do live execution.
 
 -----
 
