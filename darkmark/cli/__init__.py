@@ -30,7 +30,7 @@ app = typer.Typer(
 def get_hash(file, retries=5, sleep=1):
     try:
         new_hash = hashlib.md5(Path(file).read_text().encode()).hexdigest()
-    except:
+    except FileNotFoundError:
         if retries > 0:
             time.sleep(sleep)
             return get_hash(file, retries - 1, sleep)
