@@ -111,6 +111,17 @@ class DarkMark:
         self.md_file.write_text(self.md)
 
 
+# @register_line_magic
+# def darkmark(file):
+#     d = DarkMark(file)
+#     d.run_cells()
+#     return d
+
+
+# def load_ipython_extension(ipython):
+#     ipython.register_magic_function(darkmark, magic_kind="cell")
+
+
 if __name__ == "__main__":
     d = DarkMark("test.md")
     d.run_cells()
