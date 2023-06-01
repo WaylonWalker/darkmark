@@ -137,7 +137,6 @@ def sexp(
         help="show the log messages",
     ),
 ) -> None:
-
     d = DarkMark(file)
     Console().print(d.sexp())
     return
