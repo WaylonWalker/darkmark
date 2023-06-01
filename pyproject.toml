@@ -24,14 +24,20 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "typer",
-  "tree-sitter-languages",
-  "ipython",
-  "rich",
-  "pyflyby",
   "checksumdir",
+  "ipython",
+  "pyflyby",
+  "rich",
+  "tree-sitter-languages",
+  "typer",
 ]
+
 dynamic = ["version"]
+
+[project.optional-dependencies]
+tui = [
+  "trogon",
+]
 
 [project.urls]
 Documentation = "https://github.com/unknown/darkmark#readme"

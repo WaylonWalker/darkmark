@@ -6,6 +6,7 @@ from pathlib import Path
 import time
 
 from rich.console import Console
+from rich.markdown import Markdown
 import typer
 
 from darkmark.cli.common import verbose_callback
@@ -27,6 +28,21 @@ app = typer.Typer(
 )
 
 
+@app.command()
+def tui(ctx: typer.Context) -> None:
+    try:
+        from trogon import Trogon
+        from typer.main import get_group
+    except ImportError:
+        typer.echo("trogon not installed")
+        typer.echo(
+            "install markata with optional tui group to use tui `pip install 'darkmark[tui]'`"
+        )
+        return
+
+    Trogon(get_group(app), click_context=ctx).run()
+
+
 def get_hash(file, retries=5, sleep=1):
     try:
         new_hash = hashlib.md5(Path(file).read_text().encode()).hexdigest()
@@ -39,39 +55,7 @@ def get_hash(file, retries=5, sleep=1):
     return new_hash
 
 
-@app.callback(invoke_without_command=True)
-def main(
-    file: Path = typer.Argument(...),
-    version: bool = typer.Option(
-        False,
-        "--version",
-        callback=version_callback,  # is_eager=True
-    ),
-    debug: bool = typer.Option(None, "--debug", help="start with debug mode running"),
-    dry_run: bool = typer.Option(False, help="run without saving"),
-    sexp: bool = typer.Option(False, help="print the sexp of the document"),
-    clear: bool = typer.Option(False, help="clear existing darkmarks"),
-    verbose: bool = typer.Option(
-        False,
-        callback=verbose_callback,
-        help="show the log messages",
-    ),
-    watch: bool = typer.Option(False, help="rerun when file changes"),
-) -> None:
-    if watch:
-        old_hash = ""
-        while True:
-            if get_hash(file) != old_hash:
-                console.log("running")
-                console.log(f"old_hash: {old_hash}")
-                console.log(f"new_hash: {get_hash(file)}")
-                d = DarkMark(file)
-                d.clear()
-                d.run_cells()
-                d.write_text()
-                time.sleep(1)
-                old_hash = hashlib.md5(Path(file).read_text().encode()).hexdigest()
-
+def _run(file: Path, dry_run: bool, clear: bool, verbose: bool) -> None:
     d = DarkMark(file)
     d.clear()
 
@@ -84,11 +68,76 @@ def main(
 
     d.run_cells()
 
-    if sexp:
-        Console().print(d.sexp())
-        return
     if dry_run:
-        Console().print(d.md)
+        md = Markdown(d.md)
+        Console().print(md)
         return
     else:
         d.write_text()
+
+
+@app.command()
+def run(
+    file: Path = typer.Argument(...),
+    version: bool = typer.Option(
+        False,
+        "--version",
+        callback=version_callback,  # is_eager=True
+    ),
+    debug: bool = typer.Option(None, "--debug", help="start with debug mode running"),
+    dry_run: bool = typer.Option(False, help="run without saving"),
+    clear: bool = typer.Option(False, help="clear existing darkmarks"),
+    verbose: bool = typer.Option(
+        False,
+        callback=verbose_callback,
+        help="show the log messages",
+    ),
+) -> None:
+    _run(file=file, dry_run=dry_run, clear=clear, verbose=verbose)
+
+
+@app.command()
+def watch(
+    file: Path = typer.Argument(...),
+    version: bool = typer.Option(
+        False,
+        "--version",
+        callback=version_callback,  # is_eager=True
+    ),
+    debug: bool = typer.Option(None, "--debug", help="start with debug mode running"),
+    dry_run: bool = typer.Option(False, help="run without saving"),
+    clear: bool = typer.Option(False, help="clear existing darkmarks"),
+    verbose: bool = typer.Option(
+        False,
+        callback=verbose_callback,
+        help="show the log messages",
+    ),
+) -> None:
+    old_hash = ""
+    while True:
+        if get_hash(file) != old_hash:
+            _run(file=file, dry_run=dry_run, clear=clear, verbose=verbose)
+            time.sleep(1)
+            old_hash = hashlib.md5(Path(file).read_text().encode()).hexdigest()
+
+
+@app.command()
+def sexp(
+    file: Path = typer.Argument(...),
+    version: bool = typer.Option(
+        False,
+        "--version",
+        callback=version_callback,  # is_eager=True
+    ),
+    debug: bool = typer.Option(None, "--debug", help="start with debug mode running"),
+    clear: bool = typer.Option(False, help="clear existing darkmarks"),
+    verbose: bool = typer.Option(
+        False,
+        callback=verbose_callback,
+        help="show the log messages",
+    ),
+) -> None:
+
+    d = DarkMark(file)
+    Console().print(d.sexp())
+    return
